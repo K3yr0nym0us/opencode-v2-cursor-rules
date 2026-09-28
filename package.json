@@ -1,16 +1,21 @@
 {
   "name": "cursor-rules",
   "version": "1.0.0",
-  "description": "",
+  "description": "Plugin para OpenCode V2 que carga automáticamente las reglas de Cursor en cada sesión",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["opencode", "cursor", "rules", "plugin"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@opencode/plugin": "^2.0.18"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
   }
 }
