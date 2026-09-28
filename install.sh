@@ -49,20 +49,57 @@ cleanup() {
 
 trap cleanup EXIT
 
+# ─── Detectar gestores de paquetes disponibles ─────────────────────────────────
+AVAILABLE_PKGS=()
+
+command -v npm &>/dev/null && AVAILABLE_PKGS+=("npm")
+command -v yarn &>/dev/null && AVAILABLE_PKGS+=("yarn")
+command -v pnpm &>/dev/null && AVAILABLE_PKGS+=("pnpm")
+
+if [ ${#AVAILABLE_PKGS[@]} -eq 0 ]; then
+  error "No se encontró ningún gestor de paquetes (npm, yarn, pnpm)."
+  exit 1
+fi
+
+# ─── Seleccionar gestor de paquetes ────────────────────────────────────────────
+SELECTED_PKG=""
+
+if [ ${#AVAILABLE_PKGS[@]} -eq 1 ]; then
+  SELECTED_PKG="${AVAILABLE_PKGS[0]}"
+  info "Solo se encontró ${SELECTED_PKG}. Se usará automáticamente."
+else
+  echo ""
+  info "Gestores de paquetes disponibles:"
+  echo ""
+  for i in "${!AVAILABLE_PKGS[@]}"; do
+    echo "  $((i+1))) ${AVAILABLE_PKGS[$i]}"
+  done
+  echo ""
+
+  while true; do
+    read -r -p "¿Cuál deseas usar? (1-${#AVAILABLE_PKGS[@]}): " choice
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le ${#AVAILABLE_PKGS[@]} ]; then
+      SELECTED_PKG="${AVAILABLE_PKGS[$((choice-1))]}"
+      break
+    else
+      warn "Opción inválida. Intenta de nuevo."
+    fi
+  done
+fi
+
+success "Gestor seleccionado: ${SELECTED_PKG}"
+
 # ─── Verificaciones previas ───────────────────────────────────────────────────
+echo ""
 echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║  Instalador del plugin cursor-rules para OpenCode          ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 echo "  Shell detectado: ${SHELL_NAME}"
+echo "  Gestor de paquetes: ${SELECTED_PKG}"
 echo ""
 
 info "Verificando prerequisitos..."
-
-if ! command -v npm &>/dev/null; then
-  error "npm no está instalado. Instálalo primero."
-  exit 1
-fi
 
 if [ ! -f "${REPO_DIR}/package.json" ]; then
   error "No se encontró package.json. Asegúrate de estar en la raíz del repo."
@@ -73,10 +110,21 @@ success "Prerrequisitos OK."
 
 # ─── Paso 1: Instalar dependencias ────────────────────────────────────────────
 echo ""
-info "Paso 1/3: Instalando dependencias..."
+info "Paso 1/3: Instalando dependencias con ${SELECTED_PKG}..."
 
 cd "${REPO_DIR}"
-npm install --omit=dev --no-audit --no-fund
+
+case "${SELECTED_PKG}" in
+  npm)
+    npm install --omit=dev --no-audit --no-fund
+    ;;
+  yarn)
+    yarn install --production
+    ;;
+  pnpm)
+    pnpm install --prod
+    ;;
+esac
 
 success "Dependencias instaladas."
 
@@ -85,7 +133,17 @@ echo ""
 info "Paso 2/3: Compilando TypeScript..."
 
 if [ -f "tsconfig.json" ]; then
-  npx tsc
+  case "${SELECTED_PKG}" in
+    npm)
+      npx tsc
+      ;;
+    yarn)
+      yarn tsc
+      ;;
+    pnpm)
+      pnpm exec tsc
+      ;;
+  esac
   success "TypeScript compilado."
 else
   warn "No se encontró tsconfig.json. Saltando compilación."

@@ -22,10 +22,11 @@ sh install.sh
 ```
 
 El script automáticamente:
-1. Instala las dependencias y compila TypeScript
-2. Copia el plugin a `~/.config/opencode/plugins/cursor-rules`
-3. Actualiza tu `~/.config/opencode/opencode.json`
-4. Limpia todos los archivos residuales (incluyendo el propio script)
+1. Detecta qué gestores de paquetes tienes instalados (npm, yarn, pnpm) y te pregunta cuál usar
+2. Instala las dependencias y compila TypeScript
+3. Copia el plugin a `~/.config/opencode/plugins/cursor-rules`
+4. Actualiza tu `~/.config/opencode/opencode.json`
+5. Limpia todos los archivos residuales (incluyendo el propio script)
 
 ## Instalación manual
 
