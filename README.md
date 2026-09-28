@@ -11,10 +11,14 @@ git clone https://github.com/K3yr0nym0us/opencode-v2-cursor-rules.git
 cd opencode-v2-cursor-rules
 ```
 
-2. Ejecuta el script de instalación:
+2. Ejecuta el script de instalación (funciona con bash, zsh o sh):
 
 ```bash
 bash install.sh
+# o
+zsh install.sh
+# o
+sh install.sh
 ```
 
 El script automáticamente:

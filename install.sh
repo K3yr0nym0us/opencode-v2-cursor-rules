@@ -3,12 +3,24 @@
 # install.sh — Instalador automático del plugin cursor-rules para OpenCode
 #
 # Uso:
-#   git clone https://github.com/TU_USUARIO/opencode-v2-cursor-rules.git
+#   git clone <URL_DEL_REPO>
 #   cd opencode-v2-cursor-rules
-#   bash install.sh
+#   bash install.sh    # o: zsh install.sh    # o: sh install.sh
 #
 
 set -euo pipefail
+
+# ─── Detectar shell y ajustar variables ───────────────────────────────────────
+if [ -n "${BASH_VERSION:-}" ]; then
+  SHELL_NAME="bash"
+  SCRIPT_PATH="${BASH_SOURCE[0]}"
+elif [ -n "${ZSH_VERSION:-}" ]; then
+  SHELL_NAME="zsh"
+  SCRIPT_PATH="${(%):-%x}"
+else
+  SHELL_NAME="sh"
+  SCRIPT_PATH="$0"
+fi
 
 # ─── Colores para output ──────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -18,7 +30,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # ─── Variables ────────────────────────────────────────────────────────────────
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${SCRIPT_PATH}")" && pwd)"
 INSTALL_DIR="${HOME}/.config/opencode/plugins/cursor-rules"
 OPENCODE_CONFIG="${HOME}/.config/opencode/opencode.json"
 
@@ -30,9 +42,7 @@ error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 
 cleanup() {
   info "Limpiando archivos residuales..."
-  # Eliminar el propio script
   rm -f "${REPO_DIR}/install.sh"
-  # Eliminar archivos de build de TypeScript si existen
   rm -f "${REPO_DIR}/index.js" "${REPO_DIR}/index.d.ts" "${REPO_DIR}/index.js.map" "${REPO_DIR}/index.d.ts.map"
   success "Limpieza completada."
 }
@@ -43,6 +53,8 @@ trap cleanup EXIT
 echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║  Instalador del plugin cursor-rules para OpenCode          ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
+echo ""
+echo "  Shell detectado: ${SHELL_NAME}"
 echo ""
 
 info "Verificando prerequisitos..."
