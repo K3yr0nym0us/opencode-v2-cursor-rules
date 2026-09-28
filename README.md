@@ -59,7 +59,8 @@ cd ~/.config/opencode/plugins/cursor-rules && npm install && npm run build
 ## Cómo funciona
 
 - Lee automáticamente los archivos `.mdc` y `.md` de `.cursor/rules/` del proyecto actual
-- Los inyecta en el system prompt de cada sesión
+- Los inyecta al **inicio** del system prompt de cada sesión para máxima prioridad
+- Incluye un encabezado "MANDATORY — MUST FOLLOW" para reforzar su importancia
 - Funciona para cualquier proyecto que tenga `.cursor/rules/`
 
 ## Estructura del proyecto

@@ -25,7 +25,9 @@ export default Plugin.define({
     if (rules.length === 0) return
 
     await ctx.session.hook("context", (event) => {
-      event.system.push({ type: "text", text: `\n\n## Cursor Rules\n\n${rules.join("\n\n")}` })
+      // Insertar las reglas al INICIO del system prompt para máxima prioridad
+      const rulesText = `## Cursor Rules (MANDATORY — MUST FOLLOW)\n\n${rules.join("\n\n")}`
+      event.system.unshift({ type: "text", text: rulesText })
     })
   },
 })
