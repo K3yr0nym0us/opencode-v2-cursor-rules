@@ -39,7 +39,7 @@ cd ~/.config/opencode/plugins/cursor-rules && npm install
 ```
 .cursor/rules/
 ├── general.mdc
-├── kyp-development-standards.mdc
+├── standards.mdc
 └── ...
 ```
 
